@@ -1,98 +1,71 @@
-import * as Device from 'expo-device';
-import { Platform, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-
-import { AnimatedIcon } from '@/components/animated-icon';
-import { HintRow } from '@/components/hint-row';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { WebBadge } from '@/components/web-badge';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
-
-function getDevMenuHint() {
-  if (Platform.OS === 'web') {
-    return <ThemedText type="small">use browser devtools</ThemedText>;
-  }
-  if (Device.isDevice) {
-    return (
-      <ThemedText type="small">
-        shake device or press <ThemedText type="code">m</ThemedText> in terminal
-      </ThemedText>
-    );
-  }
-  const shortcut = Platform.OS === 'android' ? 'cmd+m (or ctrl+m)' : 'cmd+d';
-  return (
-    <ThemedText type="small">
-      press <ThemedText type="code">{shortcut}</ThemedText>
-    </ThemedText>
-  );
-}
+import React from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput } from 'react-native';
+import { useRouter } from 'expo-router';
 
 export default function HomeScreen() {
+  const router = useRouter();
+
   return (
-    <ThemedView style={styles.container}>
-      <SafeAreaView style={styles.safeArea}>
-        <ThemedView style={styles.heroSection}>
-          <AnimatedIcon />
-          <ThemedText type="title" style={styles.title}>
-            Welcome to&nbsp;Expo
-          </ThemedText>
-        </ThemedView>
+    <ScrollView style={styles.container}>
+      {/* Search Header */}
+      <View style={styles.searchContainer}>
+        <TextInput style={styles.searchInput} placeholder="Cari..." />
+      </View>
 
-        <ThemedText type="code" style={styles.code}>
-          get started
-        </ThemedText>
+      <Text style={styles.greeting}>
+        Selamat Datang <Text style={{ fontWeight: 'bold' }}>Kalila Tania</Text>
+      </Text>
 
-        <ThemedView type="backgroundElement" style={styles.stepContainer}>
-          <HintRow
-            title="Try editing"
-            hint={<ThemedText type="code">src/app/index.tsx</ThemedText>}
-          />
-          <HintRow title="Dev tools" hint={getDevMenuHint()} />
-          <HintRow
-            title="Fresh start"
-            hint={<ThemedText type="code">npm run reset-project</ThemedText>}
-          />
-        </ThemedView>
+      <Text style={styles.sectionHeader}>Pemberitahuan Mendesak</Text>
 
-        {Platform.OS === 'web' && <WebBadge />}
-      </SafeAreaView>
-    </ThemedView>
+      {/* Card Expired Alert */}
+      <View style={styles.alertCard}>
+        <Text style={styles.alertIcon}>⚠️</Text>
+        <View style={{ flex: 1 }}>
+          <Text style={styles.alertTitle}>Peringatan Stok Kadaluwarsa H-30</Text>
+          <Text style={styles.alertDetail}>Paracetamol 500mg</Text>
+          <Text style={styles.alertDetail}>stok : 8</Text>
+          <Text style={styles.alertDetail}>Expired : 12/10/26</Text>
+        </View>
+      </View>
+
+      <Text style={styles.sectionHeader}>Ringkasan Stok Obat</Text>
+
+      {/* Ringkasan Cards */}
+      <View style={styles.row}>
+        <TouchableOpacity style={styles.cardValid} onPress={() => router.push('/stok')}>
+          <Text style={styles.cardTitle}>Valid</Text>
+          <Text style={styles.cardValue}>134</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.cardExpired} onPress={() => router.push('/stok')}>
+          <Text style={styles.cardTitle}>Expired</Text>
+          <Text style={styles.cardValue}>7</Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* Bottom Button */}
+      <TouchableOpacity style={styles.btnPembayaran} onPress={() => router.push('/pembayaran')}>
+        <Text style={styles.btnText}>Pembayaran</Text>
+      </TouchableOpacity>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    flexDirection: 'row',
-  },
-  safeArea: {
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    alignItems: 'center',
-    gap: Spacing.three,
-    paddingBottom: BottomTabInset + Spacing.three,
-    maxWidth: MaxContentWidth,
-  },
-  heroSection: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    gap: Spacing.four,
-  },
-  title: {
-    textAlign: 'center',
-  },
-  code: {
-    textTransform: 'uppercase',
-  },
-  stepContainer: {
-    gap: Spacing.three,
-    alignSelf: 'stretch',
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.four,
-    borderRadius: Spacing.four,
-  },
+  container: { flex: 1, backgroundColor: '#f0faf4', padding: 16 },
+  searchContainer: { backgroundColor: '#e2e8f0', borderRadius: 10, padding: 10, marginBottom: 16 },
+  searchInput: { fontSize: 15 },
+  greeting: { fontSize: 20, color: '#1e293b', marginBottom: 12 },
+  sectionHeader: { fontSize: 18, fontWeight: 'bold', marginVertical: 12, color: '#0f172a' },
+  alertCard: { backgroundColor: '#e2e8f0', padding: 16, borderRadius: 12, flexDirection: 'row', alignItems: 'center' },
+  alertIcon: { fontSize: 32, marginRight: 12 },
+  alertTitle: { color: '#dc2626', fontWeight: 'bold', fontSize: 16, marginBottom: 4 },
+  alertDetail: { fontSize: 14, color: '#334155' },
+  row: { flexDirection: 'row', justifyContent: 'space-between', marginVertical: 12 },
+  cardValid: { flex: 0.48, backgroundColor: '#0e6273', padding: 20, borderRadius: 12, alignItems: 'center' },
+  cardExpired: { flex: 0.48, backgroundColor: '#0e6273', padding: 20, borderRadius: 12, alignItems: 'center' },
+  cardTitle: { color: '#fff', fontSize: 18 },
+  cardValue: { color: '#fff', fontSize: 36, fontWeight: 'bold', marginTop: 8 },
+  btnPembayaran: { backgroundColor: '#0e6273', padding: 16, borderRadius: 10, alignItems: 'center', marginTop: 20 },
+  btnText: { color: '#fff', fontSize: 18, fontWeight: 'bold' },
 });
